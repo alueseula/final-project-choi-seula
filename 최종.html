@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예산 & 스타일 맞춤 여름방학 여행지 추천</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        body {
+            background-color: #f0f8ff;
+            color: #333;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+        
+        /* 헤더 */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            color: #0056b3;
+            font-size: 36px;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+        .header p {
+            font-size: 18px;
+            color: #555;
+        }
+
+        /* 입력 폼 영역 */
+        .input-section {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin-bottom: 40px;
+        }
+
+        .input-group {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .input-group label {
+            display: block;
+            font-size: 20px;
+            font-weight: bold;
+            color: #0056b3;
+            margin-bottom: 15px;
+        }
+
+        /* 예산 입력 폼 */
+        .budget-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+        input[type="number"] {
+            font-size: 24px;
+            font-weight: bold;
+            padding: 15px 20px;
+            border: 2px solid #b3d4ff;
+            border-radius: 12px;
+            width: 300px;
+            outline: none;
+            color: #0056b3;
+            text-align: right;
+            transition: all 0.3s;
+        }
+        input[type="number"]:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1);
+        }
+        .budget-unit {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* 스타일 선택 버튼 */
+        .style-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .style-options input[type="radio"] {
+            display: none;
+        }
+        .style-label {
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #6c757d;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .style-options input[type="radio"]:checked + .style-label {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 86, 179, 0.3);
+        }
+
+        /* 제출 버튼 */
+        .submit-btn {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            font-size: 20px;
+            font-weight: bold;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #003d82;
+        }
+
+        /* 에러 메시지 */
+        .error-msg {
+            color: #d93025;
+            font-weight: bold;
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fce8e6;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        /* 결과 표시 영역 */
+        .results-section {
+            display: none;
+        }
+        .results-header {
+            font-size: 24px;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #0056b3;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+        
+        /* 카드 디자인 */
+        .card {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            border-top: 6px solid #0056b3;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,86,179,0.15);
+        }
+        .card::after {
+            content: "클릭해서 명소 보기👆";
+            display: block;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #888;
+        }
+        .rank-badge {
+            background-color: #ffd700;
+            color: #b8860b;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .style-badge {
+            display: block;
+            font-size: 13px;
+            color: #0056b3;
+            margin-bottom: 15px;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #222;
+        }
+        .card-budget {
+            color: #0056b3;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #f0f8ff;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        /* 팝업(모달) 디자인 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 30px;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-btn:hover { color: #333; }
+        .modal-title {
+            font-size: 28px;
+            color: #0056b3;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f8ff;
+            padding-bottom: 10px;
+        }
+        .modal-spots {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+        }
+        .modal-spots li {
+            font-size: 18px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #0056b3;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .grid-container { grid-template-columns: 1fr; }
+            .budget-wrapper { flex-direction: column; }
+            input[type="number"], .submit-btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>✈️ 맞춤형 여름방학 여행지 추천</h1>
+        <p>예산과 여행 스타일을 선택하고, 추천 여행지를 클릭해 명소를 확인하세요!</p>
+    </div>
+
+    <div class="input-section">
+        <div class="input-group">
+            <label>1. 예산이 얼마인가요?</label>
+            <div class="budget-wrapper">
+                <input type="number" id="budgetInput" placeholder="예: 500000" step="10000">
+                <span class="budget-unit">원</span>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>2. 어떤 여행을 원하시나요?</label>
+            <div class="style-options">
+                <input type="radio" id="style_relax" name="travelStyle" value="휴양형" checked>
+                <label for="style_relax" class="style-label">🌴 휴양 (자연·힐링)</label>
+                
+                <input type="radio" id="style_activity" name="travelStyle" value="액티비티형">
+                <label for="style_activity" class="style-label">🚴 액티비티 (체험·관광)</label>
+
+                <input type="radio" id="style_culture" name="travelStyle" value="맛집·문화탐방형">
+                <label for="style_culture" class="style-label">🍜 맛집·문화 (도시·전통)</label>
+            </div>
+        </div>
+
+        <button class="submit-btn" onclick="findDestinations()">여행지 추천받기</button>
+        <p class="error-msg" id="errorMsg"></p>
+    </div>
+
+    <div class="results-section" id="resultsSection">
+        <h2 class="results-header">✨ 당신을 위한 맞춤 추천 TOP 3 ✨</h2>
+        <div class="grid-container" id="resultsGrid">
+            </div>
+    </div>
+</div>
+
+<div id="spotModal" class="modal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="close-btn" onclick="closeModal(null, true)">&times;</span>
+        <h2 class="modal-title" id="modalTitle">여행지 이름</h2>
+        <p style="margin-bottom:15px; color:#666; font-weight:bold;">📍 이곳은 꼭 가보세요!</p>
+        <ul class="modal-spots" id="modalSpots">
+            </ul>
+    </div>
+</div>
+
+<script>
+    // 여행지 데이터베이스 (명소 정보 추가)
+    const destinations = [
+        // 🌴 휴양형
+        { name: "태안", cost: 90000, style: "휴양형", spots: ["꽃지해수욕장", "안면도 자연휴양림", "천리포수목원"] },
+        { name: "통영", cost: 100000, style: "휴양형", spots: ["동피랑 벽화마을", "통영 케이블카", "이순신공원"] },
+        { name: "강릉", cost: 130000, style: "휴양형", spots: ["경포대 해수욕장", "안목해변 카페거리", "정동진"] },
+        { name: "여수", cost: 130000, style: "휴양형", spots: ["오동도", "향일암", "여수 해상케이블카"] },
+        { name: "속초", cost: 140000, style: "휴양형", spots: ["속초해수욕장", "설악산 국립공원", "아바이마을"] },
+        { name: "양양", cost: 140000, style: "휴양형", spots: ["서피비치", "낙산사", "휴휴암"] },
+        { name: "거제", cost: 150000, style: "휴양형", spots: ["바람의 언덕", "외도 보타니아", "학동 몽돌해변"] },
+        { name: "제주", cost: 200000, style: "휴양형", spots: ["성산일출봉", "협재해수욕장", "카멜리아힐"] },
+        { name: "남해", cost: 230000, style: "휴양형", spots: ["다랭이마을", "독일마을", "보리암"] },
+        { name: "울릉도", cost: 250000, style: "휴양형", spots: ["나리분지", "독도 전망대", "관음도"] },
+        { name: "다낭", cost: 450000, style: "휴양형", spots: ["미케비치", "바나힐", "오행산"] },
+        { name: "나트랑", cost: 500000, style: "휴양형", spots: ["빈원더스", "나트랑 해변", "포나가르 사원"] },
+        { name: "푸꾸옥", cost: 600000, style: "휴양형", spots: ["빈펄 사파리", "혼똔섬 케이블카", "그랜드월드"] },
+        { name: "세부", cost: 600000, style: "휴양형", spots: ["오슬롭 고래상어", "모알보알 거북이", "막탄섬 리조트"] },
+        { name: "푸켓", cost: 650000, style: "휴양형", spots: ["피피섬", "빠통 비치", "올드타운"] },
+        { name: "코타키나발루", cost: 700000, style: "휴양형", spots: ["탄중아루 해변 (선셋)", "반딧불 투어", "마누칸섬"] },
+        { name: "보라카이", cost: 700000, style: "휴양형", spots: ["화이트 비치", "디몰(D'Mall)", "푸카쉘 비치"] },
+        { name: "코사무이", cost: 800000, style: "휴양형", spots: ["차웽 비치", "피셔맨스 빌리지", "빅 부다 사원"] },
+        { name: "발리", cost: 800000, style: "휴양형", spots: ["우붓 원숭이 사원", "스미냑 비치", "렘푸양 사원"] },
+        { name: "괌", cost: 900000, style: "휴양형", spots: ["투몬 비치", "사랑의 절벽", "리티디안 해변"] },
+        { name: "사이판", cost: 900000, style: "휴양형", spots: ["마나가하섬", "새섬", "만세절벽"] },
+        { name: "하와이", cost: 1000000, style: "휴양형", spots: ["와이키키 해변", "다이아몬드 헤드", "하나우마 베이"] },
+
+        // 🚴 액티비티형
+        { name: "춘천", cost: 60000, style: "액티비티형", spots: ["남이섬", "강촌 레일바이크", "소양강 스카이워크"] },
+        { name: "파주", cost: 60000, style: "액티비티형", spots: ["헤이리 예술마을", "마장호수 출렁다리", "임진각 평화누리"] },
+        { name: "포천", cost: 70000, style: "액티비티형", spots: ["산정호수", "허브아일랜드", "포천 아트밸리"] },
+        { name: "가평", cost: 80000, style: "액티비티형", spots: ["수상레저(빠지)", "아침고요수목원", "쁘띠프랑스"] },
+        { name: "포항", cost: 90000, style: "액티비티형", spots: ["스페이스워크", "호미곶 해맞이광장", "영일대 해수욕장"] },
+        { name: "부산", cost: 120000, style: "액티비티형", spots: ["해운대 스카이캡슐", "광안리 해양레저", "송도 해상케이블카"] },
+        { name: "경주", cost: 120000, style: "액티비티형", spots: ["경주월드", "황리단길 한복체험", "동궁과 월지 야경"] },
+        { name: "오사카", cost: 350000, style: "액티비티형", spots: ["유니버설 스튜디오 재팬", "도톤보리", "오사카성"] },
+        { name: "도쿄", cost: 400000, style: "액티비티형", spots: ["디즈니랜드/씨", "도쿄타워", "시부야 스카이"] },
+        { name: "삿포로", cost: 450000, style: "액티비티형", spots: ["비에이 투어", "오도리 공원", "팜 토미타"] },
+        { name: "홍콩", cost: 450000, style: "액티비티형", spots: ["홍콩 디즈니랜드", "빅토리아 피크", "란콰이퐁"] },
+        { name: "방콕", cost: 500000, style: "액티비티형", spots: ["왓 아룬", "카오산 로드", "짜뚜짝 주말시장"] },
+        { name: "치앙마이", cost: 500000, style: "액티비티형", spots: ["도이수텝", "올드타운 자전거 투어", "나이트 사파리"] },
+        { name: "싱가포르", cost: 800000, style: "액티비티형", spots: ["유니버설 스튜디오", "마리나 베이 샌즈", "가든스 바이 더 베이"] },
+        { name: "두바이", cost: 1000000, style: "액티비티형", spots: ["부르즈 할리파", "사막 사파리 투어", "팜 주메이라"] },
+        { name: "이스탄불", cost: 1000000, style: "액티비티형", spots: ["아야 소피아", "그랜드 바자르", "보스포러스 크루즈"] },
+        { name: "뉴욕", cost: 1000000, style: "액티비티형", spots: ["센트럴 파크", "타임스 스퀘어", "자유의 여신상"] },
+        { name: "라스베이거스", cost: 1000000, style: "액티비티형", spots: ["그랜드 캐년 헬기투어", "스트립 야경", "벨라지오 분수쇼"] },
+        { name: "시드니", cost: 1000000, style: "액티비티형", spots: ["오페라 하우스", "본다이 비치 서핑", "블루마운틴 투어"] },
+
+        // 🍜 맛집·문화탐방형
+        { name: "인천", cost: 50000, style: "맛집·문화탐방형", spots: ["차이나타운", "월미도", "송도 센트럴파크"] },
+        { name: "서울", cost: 50000, style: "맛집·문화탐방형", spots: ["경복궁", "북촌 한옥마을", "광장시장"] },
+        { name: "수원", cost: 50000, style: "맛집·문화탐방형", spots: ["수원 화성행궁", "방화수류정", "수원 통닭거리"] },
+        { name: "전주", cost: 80000, style: "맛집·문화탐방형", spots: ["전주 한옥마을", "경기전", "남부시장 야시장"] },
+        { name: "군산", cost: 80000, style: "맛집·문화탐방형", spots: ["근대역사박물관", "이성당 빵집", "경암동 철길마을"] },
+        { name: "안동", cost: 90000, style: "맛집·문화탐방형", spots: ["하회마을", "월영교 야경", "안동 구시장 (찜닭)"] },
+        { name: "대전", cost: 140000, style: "맛집·문화탐방형", spots: ["성심당 본점", "한밭수목원", "오월드"] },
+        { name: "목포", cost: 150000, style: "맛집·문화탐방형", spots: ["목포 해상케이블카", "근대역사관", "평화광장 춤추는 바다분수"] },
+        { name: "담양", cost: 250000, style: "맛집·문화탐방형", spots: ["죽녹원", "메타세쿼이아 가로수길", "소쇄원"] },
+        { name: "후쿠오카", cost: 300000, style: "맛집·문화탐방형", spots: ["다자이후 텐만구", "캐널시티 하카타", "나카스 포장마차 거리"] },
+        { name: "타이베이", cost: 350000, style: "맛집·문화탐방형", spots: ["타이베이 101", "지우펀", "스린 야시장"] },
+        { name: "가오슝", cost: 350000, style: "맛집·문화탐방형", spots: ["보얼예술특구", "류허 야시장", "치진섬"] },
+        { name: "교토", cost: 400000, style: "맛집·문화탐방형", spots: ["청수사(기요미즈데라)", "금각사", "아라시야마 대나무숲"] },
+        { name: "나고야", cost: 400000, style: "맛집·문화탐방형", spots: ["나고야성", "오스 상점가", "지브리 파크"] },
+        { name: "하노이", cost: 400000, style: "맛집·문화탐방형", spots: ["호안끼엠 호수", "성 요셉 성당", "하롱베이 투어"] },
+        { name: "상하이", cost: 450000, style: "맛집·문화탐방형", spots: ["동방명주", "와이탄 야경", "예원"] },
+        { name: "베이징", cost: 500000, style: "맛집·문화탐방형", spots: ["자금성", "만리장성", "천단공원"] },
+        { name: "쿠알라룸푸르", cost: 550000, style: "맛집·문화탐방형", spots: ["페트로나스 트윈타워", "바투 동굴", "잘란 알로 야시장"] },
+        { name: "파리", cost: 1000000, style: "맛집·문화탐방형", spots: ["에펠탑", "루브르 박물관", "몽마르뜨 언덕"] },
+        { name: "로마", cost: 1000000, style: "맛집·문화탐방형", spots: ["콜로세움", "트레비 분수", "바티칸 시국"] },
+        { name: "바르셀로나", cost: 1000000, style: "맛집·문화탐방형", spots: ["사그라다 파밀리아", "구엘 공원", "보케리아 시장"] },
+        { name: "프라하", cost: 1000000, style: "맛집·문화탐방형", spots: ["프라하 성", "까를교", "구시가지 광장"] },
+        { name: "부다페스트", cost: 1000000, style: "맛집·문화탐방형", spots: ["헝가리 국회의사당", "어부의 요새", "세체니 온천"] },
+        { name: "빈", cost: 1000000, style: "맛집·문화탐방형", spots: ["쉔브룬 궁전", "벨베데레 궁전", "성 슈테판 대성당"] },
+        { name: "암스테르담", cost: 1000000, style: "맛집·문화탐방형", spots: ["반 고흐 미술관", "안네 프랑크의 집", "운하 크루즈"] },
+        { name: "런던", cost: 1000000, style: "맛집·문화탐방형", spots: ["대영박물관", "런던아이", "버러 마켓"] }
+    ];
+
+    function findDestinations() {
+        const inputVal = document.getElementById('budgetInput').value;
+        const selectedStyle = document.querySelector('input[name="travelStyle"]:checked').value;
+        
+        const errorMsg = document.getElementById('errorMsg');
+        const resultsSection = document.getElementById('resultsSection');
+        const resultsGrid = document.getElementById('resultsGrid');
+        
+        // 초기화
+        errorMsg.style.display = 'none';
+        resultsSection.style.display = 'none';
+        resultsGrid.innerHTML = '';
+
+        const budget = parseInt(inputVal);
+
+        if (isNaN(budget) || budget < 50000) {
+            errorMsg.style.display = 'block';
+            errorMsg.innerText = "최소 50,000원 이상의 예산을 입력해주세요.";
+            return;
+        }
+
+        const possibleDestinations = destinations.filter(dest => 
+            dest.cost <= budget && dest.style === selectedStyle
+        );
+        
+        if (possibleDestinations.length === 0) {
+            errorMsg.style.display = 'block';
+            errorMsg.innerHTML = `해당 예산으로 갈 수 있는 <strong>'${selectedStyle}'</strong> 여행지가 없습니다.<br>예산을 올리거나 다른 여행 스타일을 선택해보세요.`;
+            return;
+        }
+
+        possibleDestinations.sort((a, b) => b.cost - a.cost);
+        const top3 = possibleDestinations.slice(0, 3);
+
+        top3.forEach((dest, index) => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            // 카드 클릭 시 모달 열기 이벤트 연결
+            card.onclick = () => openModal(dest.name, dest.spots);
+            
+            const formattedCost = dest.cost.toLocaleString() + '원';
+            
+            card.innerHTML = `
+                <div class="rank-badge">추천 ${index + 1}순위</div>
+                <span class="style-badge">${dest.style}</span>
+                <div class="card-title">${dest.name}</div>
+                <div class="card-budget">예상 예산: ${formattedCost}~</div>
+            `;
+            resultsGrid.appendChild(card);
+        });
+
+        resultsSection.style.display = 'block';
+    }
+
+    // 모달 제어 함수
+    function openModal(name, spots) {
+        document.getElementById('modalTitle').innerText = name;
+        
+        const spotsList = document.getElementById('modalSpots');
+        spotsList.innerHTML = ''; // 기존 리스트 초기화
+        
+        // 명소 리스트 생성
+        spots.forEach(spot => {
+            const li = document.createElement('li');
+            li.innerHTML = `<strong>${spot}</strong>`;
+            spotsList.appendChild(li);
+        });
+
+        const modal = document.getElementById('spotModal');
+        modal.classList.add('show');
+    }
+
+    function closeModal(event, forceClose = false) {
+        const modal = document.getElementById('spotModal');
+        // 검은 배경을 클릭했거나(X 버튼을 누른 경우) 닫기
+        if (forceClose || event.target === modal) {
+            modal.classList.remove('show');
+        }
+    }
+</script>
+
+</body>
+</html>
